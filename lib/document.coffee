@@ -8,6 +8,7 @@ PDFObjectStore = require './store'
 PDFObject = require './object'
 PDFReference = require './reference'
 PDFPage = require './page'
+PDFTable = require './table'
 
 class PDFDocument
     constructor: (@options = {}) ->
@@ -58,7 +59,8 @@ class PDFDocument
     mixin 'text'
     mixin 'images'
     mixin 'annotations'
-        
+    mixin 'tables'
+    
     addPage: (options = @options) ->
         # create a page object
         @page = new PDFPage(this, options)
