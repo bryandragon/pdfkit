@@ -42,6 +42,30 @@ module.exports =
     widthOfString: (string) ->
         @_font.widthOfString string, @_fontSize
         
+    heightOfString: (string, boundWidth) ->
+        @_font.heightOfString string, @_fontSize, boundWidth
+        
+    # Execute the given closure in the given font context,
+    # restoring font settings to previous values when finished
+    # Context options: font, fontSize, fillColor, fillOpacity
+    withFontContext: (context, func) ->
+        originalFont = @_font.filename
+        originalFontSize = @_fontSize
+        originalFillColor = '#000'
+        originalFillOpacity = 1.0
+
+        @font(context.font) if context.font?
+        @fontSize(context.fontSize) if context.fontSize?
+        @fillColor(context.fillColor, context.fillOpacity or 1.0) if context.fillColor?
+
+        value = func()
+
+        @font(originalFont)
+        @fontSize(originalFontSize)
+        # @fillColor(originalFillColor, originalFillOpacity)
+
+        value
+
     currentLineHeight: (includeGap = false) ->
         @_font.lineHeight @_fontSize, includeGap
         

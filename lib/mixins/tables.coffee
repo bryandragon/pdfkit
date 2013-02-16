@@ -1,6 +1,8 @@
-module.exports =
-  initTable: =>
-    # TODO
+PDFTable = require '../table'
 
-  table: (data, options = {}) =>
-    # TODO
+module.exports =
+    table: (data, options = {}) ->
+        t = new PDFTable(this, data, options)
+        t.special = 'wee!'
+        t.draw()
+        return this

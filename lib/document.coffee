@@ -8,7 +8,6 @@ PDFObjectStore = require './store'
 PDFObject = require './object'
 PDFReference = require './reference'
 PDFPage = require './page'
-PDFTable = require './table'
 
 class PDFDocument
     constructor: (@options = {}) ->
@@ -72,6 +71,10 @@ class PDFDocument
         # reset x and y coordinates
         @x = @page.margins.left
         @y = @page.margins.top
+        
+        @bounds =
+            width: @page.width - @page.margins.left - @page.margins.right
+            height: @page.height - @page.margins.top - @page.margins.bottom
         
         return this
         

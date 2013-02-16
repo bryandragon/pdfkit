@@ -8,6 +8,8 @@ AFMFont = require './font/afm'
 Subset = require './font/subset'
 zlib = require 'zlib'
 
+WORD_RE = /([^ ,\/!.?:;\-\n]+[ ,\/!.?:;\-]*)|\n/g
+
 class PDFFont
     constructor: (@document, @filename, @family, @id) ->
         if @filename in @_standardFonts
@@ -200,9 +202,40 @@ class PDFFont
         
         scale = size / 1000    
         return width * scale
-        
+
+    heightOfString: (string, size, boundWidth) ->
+        string = '' + string
+        spaceLeft = boundWidth
+        lines = 1
+        words = string.match(WORD_RE)
+        wordLens = {}
+        for word, i in words
+            wordLen = wordLens[word] ?= @widthOfString(word, size)
+            if word == '\n'
+                spaceLeft = boundWidth
+                lines++
+            else if wordLen > spaceLeft
+                spaceLeft = boundWidth - wordLen
+                lines++
+            else
+                spaceLeft -= wordLen
+        console.log("lines: " + lines)
+        #     if string[i] == '\n'
+        #         width = 0
+        #         lines++
+        #     else
+        #         charWidth = @widthOfString(string[i], size)
+        #         width += charWidth
+        #         if width > boundWidth
+        #             width = 0
+        #             lines++
+        # includeGap = if lines > 1 then true else false
+        # lastGap = (if includeGap then @lineGap else 0) / 1000 * size
+        lineHeight = @lineHeight(size, true)
+        lines * lineHeight # - lastGap
+
     lineHeight: (size, includeGap = false) ->
         gap = if includeGap then @lineGap else 0
         (@ascender + gap - @decender) / 1000 * size
-        
+
 module.exports = PDFFont
